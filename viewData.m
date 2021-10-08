@@ -1,19 +1,21 @@
 % DBS data analysis
+% LFP data
 [filename, pathname] = uigetfile('*.csv');
 
-data =xlsread([pathname filename]);
+dataLFP =xlsread([pathname filename]);
 
 figure;
-plot(data(:,1))
-plot(data(:,1), data(:,2))
-for i = 1:4,
-subplot(4,1,i);
-plot(data(:,1), data(:,i+1))
+[v] = datevec(dataLFP(:,1)); %year month day hour minute second
+tLFP = v(:,4)*3600 + v(:,5)*60+v(:,6);
+lfp = dataLFP(:,2:end);
+nCh = size(lfp, 2);
+for i = 1:nCh,
+subplot(nCh,1,i);
+plot(tLFP, lfp(:,i))
 end
 Nfft = 2^12;
-Xf = fft(data(:,2), Nfft);
+Xf = fft(lfp(:,1), Nfft);
 figure;
-mean(diff(data(:,1)))
-fs = 1/ans
+fs = 1/ mean(diff(dataLFP(:,1)));
 f = [0:2^12-1]/Nfft*fs;
 plot(f, abs(Xf))

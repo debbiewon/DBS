@@ -52,19 +52,24 @@ title('Apple Watch Acceleration (no gravity)')
 % plot(f, abs(Xf))
 % axis([0 20 -inf 400])
 
-%% Therapy needs fixing, want to look at the frequency change (when stim parameters changed)
+%% Therapy
 clear;
 clc;
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
 
+freq = data(:,2);
+therapy = data(:,3);
+
 figure;
-% therapy_state = data(:,3);
-therapy_freq = data(:,2);
-plot(time_vec, therapy_freq)
-% x = square(time);
-% plot(time, x)
-% axis([-inf inf -1.5 1.5])
+subplot(2,1,1);
+stem(time_vec, therapy)
+title('Therapy State')
+ylim([-0.05 1.1])
+
+subplot(2,1,2);
+stem(time_vec, freq)
+title('Therpay Frequency')
 
 %% Internal Acceleration and Apple Watch Acceleration
 clear;
@@ -117,4 +122,3 @@ plot(f, abs(Xf))
 %% Stimulation Therapy and Internal Acceleration   
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-% pick a patient 

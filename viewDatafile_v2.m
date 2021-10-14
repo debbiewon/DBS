@@ -28,10 +28,10 @@ clear;
 clc;
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-ipg_acceleration = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
+ipg_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
 
 figure;
-plot(time_vec, ipg_acceleration)
+plot(time_vec, ipg_accel)
 title('IPG Internal Acceleration')
 
 figure;
@@ -42,10 +42,10 @@ axis([0 8 -inf 400])
 clear;
 clc;
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
+apple_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
 
 figure;
-plot(time_vec, accel)
+plot(time_vec, apple_accel)
 title('Apple Watch Acceleration (no gravity)')
 
 % figure;
@@ -80,45 +80,80 @@ clc;
 % Watch Acceleration recordings
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-ipg_acceleration = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
+ipg_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
 figure;
-subplot(2,1,1)
-plot(time_vec, ipg_acceleration)
+ax(1) = subplot(2,1,1)
+plot(time_vec, ipg_accel)
 title('IPG Internal Acceleration')
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
+apple_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
 
-subplot(2,1,2)
-plot(time_vec, accel)
+ax(2) = subplot(2,1,2)
+plot(time_vec, apple_accel)
 title('Apple Watch Acceleration')
+linkaxes(ax, 'x');
 
-%% Internal Accelerataion and LFPs
+% align = finddelay(apple_accel, ipg_accel);
+% 
+% figure;
+% axes(ax(1));
+% plot(apple_accel(align+1:end))
+
+% aligned = alignsignals(apple_accel, ipg_accel);
+% 
+% % this aligns the ends of the signals, don't think that's what we want
+% figure;
+% subplot(2,1,2)
+% plot(aligned)
+% 
+% subplot(2,1,1)
+% plot(ipg_accel)
+
+%% LFPs and Internal Accelerataion
 
 clear;
 clc;
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-figure(1);
-subplot(2,1,1)
+figure;
+ax(1) = subplot(2,1,1)
 plot(time_vec, data(:,2:end))
 title('LFPs')
 
-figure(2);
-subplot(2,1,1)
-plot(f, abs(Xf))
+[time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
+ipg_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
+
+ax(2) = subplot(2,1,2)
+plot(time_vec, ipg_accel)
+title('IPG Internal Acceleration')
+linkaxes(ax, 'x');
+
+
+
+%% LFP, Internal Acceleration and Stimulation Therapy
 
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
-ipg_acceleration = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
-figure(1);
-subplot(2,1,2)
-plot(time_vec, ipg_acceleration)
+
+figure;
+ax(1) = subplot(3,1,1)
+plot(time_vec,data(:,2:end))
+title('LFPs')
+legend('channel 0', 'channel 1', 'channel 2', 'channel 3')
+
+[time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
+ipg_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
+
+ax(2) = subplot(3,1,2)
+plot(time_vec, ipg_accel)
 title('IPG Internal Acceleration')
 
-figure(2);
-subplot(2,1,2)
-plot(f, abs(Xf))
-
-%% Stimulation Therapy and Internal Acceleration   
-
 [time_vec, dt, fs, f, Xf, time, channels, data] = loadPatientData();
+
+therapy = data(:,3);
+
+ax(3) = subplot(3,1,3);
+stem(time_vec, therapy)
+title('Therapy State')
+ylim([-0.05 1.1])
+linkaxes(ax, 'x');

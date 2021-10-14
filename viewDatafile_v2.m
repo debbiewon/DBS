@@ -1,4 +1,4 @@
-%% LFP recordings
+%% LFP recordings %patient lfp
 clear;
 clc;
 

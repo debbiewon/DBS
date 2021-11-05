@@ -67,10 +67,13 @@ figure;
 plot(time_vec , apple_accel)
 title('Apple Watch Acceleration (no gravity)')
 
-[f, Xf, Nfft] = fftcalc(apple_accel, fs);
+% [f, Xf, Nfft] = fftcalc(apple_accel, fs);
+% figure;
+% plot(f, abs(Xf))
+% title('Acceleration freq. spectrum')
+
 figure;
-plot(f, abs(Xf))
-title('Acceleration freq. spectrum')
+pwelch(apple_accel, [], [], [], fs); 
 
 %% Therapy - ok for now
 clear;
@@ -91,7 +94,8 @@ stem(time_vec , freq)
 title('Therpay Frequency')
 
 %% Internal Acceleration and Apple Watch Acceleration - plot spectra (fft) and plot the PSD of both accelerations
-% Patient 6KOZ has brief overlaps on August 18, 2021
+% Patient 6KOZ has brief overlaps on Aug. 18th, 2021 and Oct. 27th, 2021
+% Patient RZCH has brief overlaps on Sep. 27th, 2021
 clear;
 clc;
 
@@ -103,12 +107,14 @@ figure(1);
 ax(1) = subplot(2,1,1);
 plot(ipg_time, ipg_accel)
 title('IPG Internal Acceleration')
-Nfft = 2^19;
-
-figure(2);
-[ipg_f, ipg_Xf] = fftcalc(ipg_accel, Nfft, fs);
+ 
+% figure(2);
+% [ipg_f, ipg_Xf,Nfft] = fftcalc(ipg_accel, fs);
+% subplot(2,1,1)
+% plot(ipg_f, abs(ipg_Xf))
+figure(2)
 subplot(2,1,1)
-plot(ipg_f, abs(ipg_Xf))
+pwelch(ipg_accel, [], [], [], fs); 
 
 [time_vec, fs, channels, data] = loadPatientData();
 apple_accel = sqrt(data(:,2).^2 + data(:,3).^2 + data(:,4).^2);
@@ -120,24 +126,28 @@ plot(apple_time, apple_accel)
 title('Apple Watch Acceleration')
 linkaxes(ax, 'x');
 
-figure(2);
-[apple_f, apple_Xf] = fftcalc(apple_accel, Nfft, fs);
+figure(2)
 subplot(2,1,2)
-plot(apple_f, abs(apple_Xf))
-axis([0 30 -inf inf])
+pwelch(apple_accel, [], [], [], fs);
+
+% figure(2);
+% [apple_f, apple_Xf, Nfft] = fftcalc(apple_accel, fs);
+% subplot(2,1,2)
+% plot(apple_f, abs(apple_Xf))
+% axis([0 30 -inf inf])
 % align = finddelay(apple_accel, ipg_accel);
-%
+
 % figure;
 % axes(ax(1));
 % plot(apple_accel(align+1:end))
 
 % aligned = alignsignals(apple_accel, ipg_accel);
-%
+
 % % this aligns the ends of the signals, don't think that's what we want
 % figure;
 % subplot(2,1,2)
 % plot(aligned)
-%
+
 % subplot(2,1,1)
 % plot(ipg_accel)
 

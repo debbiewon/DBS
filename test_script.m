@@ -1,45 +1,52 @@
-clear;
 clc;
+clear;
 
-% Plotting Internal acceleration and apple watch acceleration
-[ipg_time_vec, ipg_fs, ipg_channels, ipg_data] = loadPatientData();
-ipg_accel = sqrt(ipg_data(:,2).^2 + ipg_data(:,3).^2 + ipg_data(:,4).^2);
+[filename, pathname] = uigetfile('*.csv', 'Choose the LFP data');
 
-% figure(1);
-% ax(1) = subplot(2,1,1);
-% plot(ipg_time_vec, ipg_accel)
-% title('IPG Internal Acceleration')
+dataLFP=xlsread([pathname filename]);
+tLFP = dataLFP(:,1);
+tConvLFP= datetime(tLFP,'ConvertFrom','epochtime','Epoch','1970-01-01','TicksPerSecond',1,'TimeZone','UTC');
+tConvLFP.TimeZone = 'America/New_York';
+
 figure;
-ax(1) = subplot(2,1,1);
-plot(ipg_data(:,1), ipg_accel)
-title('IPG Internal Acceleration')
+LFP = dataLFP(:,2:end);
+plot(tConvLFP, LFP)
+title('LFP')
 
-[apple_time_vec, apple_fs, apple_channels, apple_data] = loadPatientData();
-apple_accel = sqrt(apple_data(:,2).^2 + apple_data(:,3).^2 + apple_data(:,4).^2);
+[filename, pathname] = uigetfile('*.csv', 'Choose the IPG acceleration data');
 
-% figure(1)
-% ax(2) = subplot(2,1,2);
-% plot(apple_time_vec, apple_accel)
-% title('Apple Watch Acceleration')
-% linkaxes(ax, 'x');
+data =xlsread([pathname filename]);
+t = data(:,1);
+tConv = datetime(t,'ConvertFrom','epochtime','Epoch','1970-01-01','TicksPerSecond',1,'TimeZone','UTC');
+tConv.TimeZone = 'America/New_York';
 
-
-ax(2) = subplot(2,1,2);
-plot(apple_data(:,1), apple_accel)
-title('Apple watch Acceleration')
-linkaxes(ax, 'x');
-
-lag_time = finddelay(apple_data(:,1), ipg_data(:,1));
-
-axes(ax(1));
-plot(apple_data(lag_time+1:end))
-
-aligned = alignsignals(apple_accel, ipg_accel);
-
-% this aligns the ends of the signals, don't think that's what we want
 figure;
-subplot(2,1,2)
-plot(aligned)
+accel = data(:,2:end);
+plot(tConv, accel)
+title('IPG accel')
 
-subplot(2,1,1)
-plot(ipg_accel)
+[filename, pathname] = uigetfile('*.csv', 'Choose the Apple watch data');
+
+dataApp=xlsread([pathname filename]);
+tApp= dataApp(:,1);
+tConvApp= datetime(tApp,'ConvertFrom','epochtime','Epoch','1970-01-01','TicksPerSecond',1,'TimeZone','UTC');
+tConvApp.TimeZone = 'America/New_York';
+
+figure;
+App= dataApp(:,2:end);
+plot(tConvApp, App)
+title('Apple accel')
+
+figure;
+subplot(3,1,1)
+plot(tConvLFP, LFP)
+ylabel('LFP')
+subplot(3,1,2)
+plot(tConv, accel)
+ylabel('IPG acc')
+subplot(3,1,3)
+plot(tConvApp, App)
+ylabel('Apple acc')
+
+ax = gca;
+ax.XAxis.Limits = [tConvApp(1) tConvApp(end)];
